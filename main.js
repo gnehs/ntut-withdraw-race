@@ -6,85 +6,6 @@ const startYear = 90,
   nbr = 20;
 
 /**
- * Animate dataLabels functionality
- */
-(function (H) {
-  const FLOAT = /^-?\d+\.?\d*$/;
-
-  // Add animated textSetter, just like fill/strokeSetters
-  H.Fx.prototype.textSetter = function (proceed) {
-    var startValue = this.start.replace(/ /g, ''),
-      endValue = this.end.replace(/ /g, ''),
-      currentValue = this.end.replace(/ /g, '');
-
-    if ((startValue || '').match(FLOAT)) {
-      startValue = parseInt(startValue, nbr);
-      endValue = parseInt(endValue, nbr);
-
-      // No support for float
-      currentValue = Highcharts.numberFormat(
-        Math.round(startValue + (endValue - startValue) * this.pos), 0);
-    }
-
-    this.elem.endText = this.end;
-
-    this.elem.attr(
-      this.prop,
-      currentValue,
-      null,
-      true
-    );
-  };
-
-  // Add textGetter, not supported at all at this moment:
-  H.SVGElement.prototype.textGetter = function (hash, elem) {
-    var ct = this.text.element.textContent || '';
-    return this.endText ? this.endText : ct.substring(0, ct.length / 2);
-  }
-
-  // Temporary change label.attr() with label.animate():
-  // In core it's simple change attr(...) => animate(...) for text prop
-  H.wrap(H.Series.prototype, 'drawDataLabels', function (proceed) {
-    var ret,
-      attr = H.SVGElement.prototype.attr,
-      chart = this.chart;
-
-    if (chart.sequenceTimer) {
-      this.points.forEach(
-        point => (point.dataLabels || []).forEach(
-          label => label.attr = function (hash, val) {
-            if (hash && hash.text !== undefined) {
-              var text = hash.text;
-
-              delete hash.text;
-
-              this.attr(hash);
-
-              this.animate({
-                text: text
-              });
-              return this;
-            } else {
-              return attr.apply(this, arguments);
-            }
-          }
-        )
-      );
-    }
-
-
-    ret = proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-
-    this.points.forEach(
-      p => (p.dataLabels || []).forEach(d => d.attr = attr)
-    );
-
-    return ret;
-
-  });
-})(Highcharts);
-
-/**
  * Calculate the data output
  */
 
@@ -98,7 +19,7 @@ Highcharts.getJSON('./result.json', function (data) {
   chart = Highcharts.chart('container', {
     chart: {
       animation: {
-        duration: 500
+        duration: 1500
       },
       events: {
         render() {
@@ -185,15 +106,14 @@ function update(increment) {
   })
 }
 
+let timer;
 /**
  * Play the timeline.
  */
 function play(button) {
   button.title = 'pause';
   button.className = 'fa fa-pause';
-  chart.sequenceTimer = setInterval(function () {
-    update(1);
-  }, 1500);
+  timer = setInterval(() => update(1), 2000);
 }
 
 /**
@@ -203,8 +123,7 @@ function play(button) {
 function pause(button) {
   button.title = 'play';
   button.className = 'fa fa-play';
-  clearTimeout(chart.sequenceTimer);
-  chart.sequenceTimer = undefined;
+  clearTimeout(timer);
 }
 
 
