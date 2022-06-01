@@ -21,14 +21,6 @@ Highcharts.getJSON('./result.json', function (data) {
       animation: {
         duration: 1500
       },
-      events: {
-        render() {
-          let chart = this;
-
-          // Responsive input
-          input.style.width = chart.plotWidth - chart.legend.legendWidth + chart.plotLeft / 2 - 10 + 'px' // where 10 is a padding
-        }
-      },
       marginRight: 50,
     },
     plotOptions: {
@@ -41,19 +33,11 @@ Highcharts.getJSON('./result.json', function (data) {
     },
     title: {
       useHTML: true,
-      text: `退選人數總計`
+      text: `退選人數總計：${Object.values(data[startYear]).reduce((a, b) => a + b, 0).toLocaleString()} 人`
     },
 
     legend: {
-      align: 'right',
-      verticalAlign: 'bottom',
-      itemStyle: {
-        fontWeight: 'bold',
-        fontSize: '50px',
-      },
-      symbolHeight: 0.001,
-      symbolWidth: 0.001,
-      symbolRadius: 0.001,
+      enabled: false
     },
     xAxis: {
       type: 'category',
@@ -61,7 +45,7 @@ Highcharts.getJSON('./result.json', function (data) {
     yAxis: [{
       opposite: true,
       title: {
-        text: '總退選人數'
+        text: ''
       },
       tickAmount: 5
     }],
@@ -92,11 +76,11 @@ function update(increment) {
   if (input.value >= endYear) { // Auto-pause
     pause(btn);
   }
-
+  document.querySelector('#value').innerText = parseInt(input.value) + 1911
   chart.update({
     title: {
       useHTML: true,
-      text: `退選人數總計`
+      text: `退選人數總計：${Object.values(initialData[input.value]).reduce((a, b) => a + b, 0).toLocaleString()} 人`
     },
   }, false, false, false)
 
@@ -113,6 +97,7 @@ let timer;
 function play(button) {
   button.title = 'pause';
   button.className = 'fa fa-pause';
+  update(1)
   timer = setInterval(() => update(1), 2000);
 }
 
@@ -128,7 +113,10 @@ function pause(button) {
 
 
 btn.addEventListener('click', function () {
-  if (chart.sequenceTimer) {
+  if (input.value >= endYear) {
+    input.value = startYear;
+  }
+  if (timer) {
     pause(this)
   } else {
     play(this)
