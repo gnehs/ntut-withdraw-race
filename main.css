@@ -1,13 +1,19 @@
 @import "https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css";
 @import "https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css";
+.highcharts-root{
+  font-family: 'Ubuntu Mono', 'Noto Sans TC', monospace !important;
+}
 #parentContainer {
+  height: 100vh;
   height: 100svh;
   overflow: hidden;
 }
 #container{
+  height: calc(100vh - 90px);
   height: calc(100svh - 90px);
 }
 #value{
+  font-family: 'Ubuntu Mono', monospace;
   position: fixed;
   right: 8px;
   bottom: 90px;
