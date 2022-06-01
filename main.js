@@ -111,6 +111,7 @@ function pause(button) {
   button.title = 'play';
   button.className = 'fa fa-play';
   clearTimeout(timer);
+  timer = null;
 }
 
 
