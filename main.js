@@ -69,12 +69,15 @@ Highcharts.getJSON('./result.json', function (data) {
  * Update the chart. This happens either on updating (moving) the range input,
  * or from a timer when the timeline is playing.
  */
+
+let timer;
 function update(increment) {
   if (increment) {
     input.value = parseInt(input.value) + increment;
   }
   if (input.value >= endYear) { // Auto-pause
     pause(btn);
+    clearTimeout(timer);
   }
   document.querySelector('#value').innerText = parseInt(input.value) + 1911
   chart.update({
@@ -90,7 +93,6 @@ function update(increment) {
   })
 }
 
-let timer;
 /**
  * Play the timeline.
  */
