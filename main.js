@@ -128,6 +128,6 @@ btn.addEventListener('click', function () {
 /**
  * Trigger the update on the range bar click.
  */
-input.addEventListener('click', function () {
+input.addEventListener('input', function () {
   update()
 })
