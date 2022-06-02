@@ -1,34 +1,167 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
-<!-- https://www.highcharts.com/blog/tutorials/bar-chart-race/ -->
 
 <head>
-  <meta charset="utf-8">
+  <!-- https://github.com/FabDevGit/barchartrace -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="./main.css">
-  <title>臺北科技大學歷年退選排名</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&family=Ubuntu+Mono:wght@400;700&display=swap" rel="stylesheet">
-  <script src="https://code.highcharts.com/highcharts.js"></script>
-  <script src="https://code.highcharts.com/stock/modules/data.js"></script>
+  <title>NTUT Bar Chart Race</title>
   <!-- SEO -->
   <meta name="description" content="提供臺北科技大學歷年退選人數視覺化圖表統計。">
   <meta name="keywords" content="北科退選排名">
   <!-- og -->
   <meta property="og:image" content="https://gnehs.github.io/ntut-withdraw-race/og.png">
+  <!--  CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+    integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&family=Ubuntu+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./main.css">
+
 </head>
 
 <body>
-  <div id="parentContainer">
-    <div id="container"></div>
-    <div id="value">2001</div>
-    <div id="play-controls">
-      <button id="play-pause-button" class="fa fa-play" title="play"></button>
-      <input id="play-range" type="range" value="90" min="90" max="110" />
-    </div>
-  </div>
-  <script src="./main.js"></script>
+  <main class="main-content" id="app">
+    <section class="section">
+      <div class="container">
+        <h1 id="main-title" class="text-center">NTUT Bar Chart Race</h1>
+        <div class="card border">
+          <div class="card-body">
+            <label for="">資料選擇</label>
+            <table class="table table-bordered">
+              <tbody>
+                <tr v-for="([key,item]) of Object.entries(settings)" :key="key">
+                  <td>((item.title))</td>
+                  <td><a href="#" @click.prevent="loadExample(key)">播放</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div id="chart-card" class="card" style="margin-top: 16px;">
+          <div class="card-body position-relative">
+            <div class="text-right mb-4">
+              <button type="button" class="btn btn-xs btn-outline-primary" v-on:click="stopRace">停止</button>
+              <button type="button" class="btn btn-xs btn-outline-primary" v-on:click="restartRace">重新開始</button>
+            </div>
+            <h5 class="card-title" id="graph-title">((title))</h5>
+            <div id="chartDiv" style="width:100%; height: 650px"></div>
+            <p style="position:absolute;top:50%;left:50%;font-size:1.125rem;transform: translate(-50%,-50%)" v-if="interval == null"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/4.1.2/papaparse.min.js"></script>
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+    integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+    integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+    integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+  <script src="./barchartrace.js"></script>
+  <script>
+    // settings for the example data
+    const settings = {
+      "withdraw": {
+        "duration": 50,
+        "top_n": 30,
+        "title": "退選教師排名",
+        "url": "./datasets/withdraw_teacher.csv"
+      },
+      "withdraw_course": {
+        "duration": 50,
+        "top_n": 30,
+        "title": "退選課程排名",
+        "url": "./datasets/withdraw_course.csv"
+      },
+      "withdraw_general": {
+        "duration": 50,
+        "top_n": 30,
+        "title": "博雅退選排名",
+        "url": "./datasets/withdraw_general.csv"
+      },
+    }
+    const app = new Vue({
+      el: '#app',
+      data: {
+        errors: [],
+        file: null,
+        csv_data: null,
+        interval: null,
+        duration: 20,
+        tickDuration: 500,
+        top_n: 10,
+        title: "請選擇上方資料集來播放",
+        settings,
+      },
+      methods: {
+        loadExample: function (setting_name) {
+          var self = this;
+          self.duration = settings[setting_name].duration;
+          self.top_n = settings[setting_name]['top_n'];
+          self.title = settings[setting_name].title;
+          Papa.parse(settings[setting_name].url, {
+            download: true,
+            header: true,
+            skipEmptyLines: true,
+            complete: function (results) {
+              if (Object.keys(results.data[0]).length === 3) {
+                results.data = reshapeData(results.data)
+              }
+              self.csv_data = results.data;
+              self.top_n = Math.min(20, Object.keys(self.csv_data[0]).length - 1)
+              self.tickDuration = self.duration / self.csv_data.length * 1000
+              self.interval = createBarChartRace(structuredClone(self.csv_data), self.top_n, self.tickDuration);
+
+              window.scrollTo({
+                top: $("#chart-card").offset().top - 10,
+                behavior: 'smooth'
+              });
+            }
+          })
+        },
+        stopRace: function () {
+          if (!this.interval) {
+            return
+          } else {
+            this.interval.stop()
+          }
+        },
+        restartRace() {
+          clearInterval(this.interval)
+          this.interval = createBarChartRace(structuredClone(this.csv_data), this.top_n, this.tickDuration);
+        }
+      },
+      delimiters: ["((", "))"]
+
+    });
+
+
+    /*
+    reshapes the data from the second accepted csv format to the other :
+    (one row per contender and per date) => (one row per date (ordered) and one column per contender.)
+    */
+    function reshapeData(data) {
+      // groupby dates (first column)
+      column_names = new Set(data.map(x => x[Object.keys(x)[1]]));
+      const grouped_by_date = _.groupBy(data, (e) => e[Object.keys(e)[0]]);
+      return Object.keys(grouped_by_date).sort().map((k) => {
+        item = {
+          'date': k
+        };
+        column_names.forEach((n) => item[n] = 0);
+        grouped_by_date[k].forEach((e) => item[e[Object.keys(e)[1]]] = e[Object.keys(e)[2]]);
+        return item
+      })
+
+    }
+  </script>
 </body>
 
 </html>

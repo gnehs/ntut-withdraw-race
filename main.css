@@ -1,59 +1,123 @@
-@import "https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css";
-@import "https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css";
-.highcharts-root{
-  font-family: 'Ubuntu Mono', 'Noto Sans TC', monospace !important;
-}
-#parentContainer {
-  height: 100vh;
-  height: 100svh;
-  overflow: hidden;
-}
-#container{
-  height: calc(100vh - 90px);
-  height: calc(100svh - 90px);
-}
-#value{
-  font-family: 'Ubuntu Mono', monospace;
-  position: fixed;
-  right: 8px;
-  bottom: 90px;
-  font-size: 90px;
-  font-weight: bold;
-}
-#play-controls {
-  position: fixed;
-  left: 0;
-  right: 0;
-  margin: auto;
-  bottom: 30px;
-  background: #494949;
-  padding: 5px;
-  padding-right: 10px;
-  border-radius: 100em;
-  width: 90vw;
-  display: flex;
-  gap: 10px;
-  align-items: center;
+
+
+body {
+    font-family:'Ubuntu Mono', 'Noto Sans TC', sans-serif;
+    font-size: .9375rem !important;
+    font-weight: 300;
+    line-height: 2;
 }
 
-#play-pause-button {
-  width: 30px;
-  height: 30px;
-  cursor: pointer;
-  border: 1px solid rgb(71, 71, 71);
-  border-radius: 3px;
-  background: #353535;
-  color: #fff;
-  border-radius: 100em;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-#play-pause-button:hover {
-  background: #181818;
+#main-title {
+    font-size: 3rem;
+    font-weight: 200;
+    line-height: 1.5;
 }
 
-#play-range {
-  width: 100%;
-  accent-color: rgb(187, 187, 187);
+label {
+    font-weight: 400;
+    font-size: 13px;
+    letter-spacing: .5px;
+    margin-bottom: 4px;
+}
+
+.btn-outline-primary.disabled, .btn-outline-primary:disabled {
+    color: #50a1ff;
+    background-color: transparent;
+}
+
+.btn {
+    font-size: 11px;
+    padding: 8px 26px 6px;
+    letter-spacing: 1.7px;
+    text-transform: uppercase;
+    border-radius: 2px;
+    outline: none;
+    -webkit-transition: 0.15s linear;
+    transition: 0.15s linear;
+}
+
+text {
+    font-size: 12px;
+}
+
+text.valueLabel {
+    font-weight: 300;
+    fill: #505050;
+     transform: translateY(.25em);
+}
+
+text.timeText {
+    font-size: 20px;
+    font-weight: 700;
+    fill: #505050;
+}
+
+.xAxis > .tick line {
+    shape-rendering: CrispEdges;
+    stroke: #cecece;
+}
+
+.xAxis > .tick line.origin {
+    stroke: #aaaaaa;
+}
+
+.tick text {
+    fill: #6f6f6f;
+}
+
+.progressBar {
+    fill: #505050;
+}
+
+.tAxis > .tick line {
+    shape-rendering: CrispEdges;
+    stroke: #aaaaaa;
+}
+
+.xAxis > path.domain {
+    display: none;
+}
+
+.tAxis > path.domain {
+    color: #aaaaaa;
+}
+
+text.label {
+    font-weight: 600;
+    fill: #202020;
+    transform: translateY(.25em);
+}
+
+.xAxis .tick:nth-child(2) text {
+    text-anchor: start;
+}
+
+
+
+.section {
+    background: #f3f4f4;
+    position: relative;
+    border-bottom: none;
+    background-position: center center;
+    -webkit-background-size: cover;
+    background-size: cover;
+    background-repeat: no-repeat;
+    padding-top: 7rem;
+    padding-bottom: 7rem;
+}
+
+.form-control {
+    display: block;
+    width: 100%;
+    height: calc(2.53125rem + 2px);
+    padding: .375rem .75rem;
+    font-size: .9375rem;
+    line-height: 1.9;
+    color: #999;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #eaeff4;
+    border-radius: 2px;
+    -webkit-transition: all 0.3s ease-out;
+    transition: all 0.3s ease-out;
 }
